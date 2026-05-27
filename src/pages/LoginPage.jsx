@@ -74,7 +74,8 @@ export default function LoginPage({ onLogin, onSwitch }) {
     if (!isValid) return;
     setLoading(true); setError("");
     try {
-      const res = await axios.post("/api/auth/login", {
+      // Swapped relative local route to production Render API URL endpoint
+      const res = await axios.post("https://salo-salo-backend.onrender.com/api/auth/login", {
         username: form.username.trim(),
         password: form.password,
       });

@@ -85,7 +85,8 @@ export default function RegisterPage({ onSwitch }) {
     if (!isValid) return;
     setLoading(true); setError(""); setSuccess("");
     try {
-      await axios.post("/api/auth/register", {
+      // Swapped out local endpoint for live production Render URL path
+      await axios.post("https://salo-salo-backend.onrender.com/api/auth/register", {
         username: form.username.trim(),
         password: form.password,
         role: form.role,
