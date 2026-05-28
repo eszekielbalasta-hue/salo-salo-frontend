@@ -1,181 +1,269 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const API = "/api/menu";
+// 1. LIVE Render API Endpoint
+const API_MENU = "https://salo-salo-backend.onrender.com/api/menu";
 
-const getFoodIcon = (name, category) => {
-  const n = name.toLowerCase();
-  if (n.includes('kare'))                               return '🥘';
-  if (n.includes('adobo'))                              return '🍖';
-  if (n.includes('sinigang'))                           return '🍲';
-  if (n.includes('lechon') || n.includes('litson'))     return '🐷';
-  if (n.includes('sisig'))                              return '🥩';
-  if (n.includes('bicol') || n.includes('laing'))       return '🌶️';
-  if (n.includes('tinola'))                             return '🍗';
-  if (n.includes('nilaga'))                             return '🍖';
-  if (n.includes('caldereta') || n.includes('kaldereta'))return '🥩';
-  if (n.includes('paksiw'))                             return '🐟';
-  if (n.includes('bangus'))                             return '🐠';
-  if (n.includes('crispy pata') || n.includes('pata')) return '🍗';
-  if (n.includes('bulalo'))                             return '🦴';
-  if (n.includes('pancit') || n.includes('pansit'))     return '🍜';
-  if (n.includes('palabok'))                            return '🍝';
-  if (n.includes('rice') || n.includes('sinangag'))     return '🍚';
-  if (n.includes('longganisa'))                         return '🌭';
-  if (n.includes('tocino'))                             return '🥓';
-  if (n.includes('tapa'))                               return '🥩';
-  if (n.includes('lumpia'))                             return '🥟';
-  if (n.includes('arroz caldo'))                        return '🍲';
-  if (n.includes('menudo'))                             return '🍛';
-  if (n.includes('dinuguan'))                           return '🍛';
-  if (n.includes('kinilaw'))                            return '🐟';
-  if (n.includes('inihaw'))                             return '🍢';
-  if (n.includes('isaw'))                               return '🍡';
-  if (n.includes('halo-halo') || n.includes('halo halo')) return '🍧';
-  if (n.includes('sago') || n.includes('gulaman'))      return '🧋';
-  if (n.includes('buko') || n.includes('coconut'))      return '🥥';
-  if (n.includes('calamansi'))                          return '🍋';
-  if (n.includes('mango'))                              return '🥭';
-  if (n.includes('coffee') || n.includes('kape'))       return '☕';
-  if (n.includes('tea'))                                return '🍵';
-  if (n.includes('juice'))                              return '🧃';
-  if (n.includes('leche flan') || n.includes('flan'))   return '🍮';
-  if (n.includes('bibingka'))                           return '🎂';
-  if (n.includes('puto'))                               return '🧁';
-  if (n.includes('turon'))                              return '🌯';
-  if (n.includes('ube'))                                return '🟣';
-  if (n.includes('polvoron'))                           return '🍪';
-  if (n.includes('yema'))                               return '🟡';
-  if (n.includes('ice cream'))                          return '🍦';
-  if (n.includes('cassava'))                            return '🍠';
-  if (n.includes('biko') || n.includes('kalamay'))      return '🍡';
-  if (category === 'Drinks')   return '🥤';
-  if (category === 'Desserts') return '🍮';
-  return '🍽';
-};
-
-export default function MenuPage({ token }) {
-  const [items, setItems] = useState([]);
+export default function MenuPageJWT() {
+  const [menuItems, setMenuItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [editItem, setEditItem] = useState(null);
-  const [form, setForm] = useState({ name: "", description: "", price: "", category: "Meals" });
+  
+  // Form States
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [category, setCategory] = useState("Meals");
+  const [description, setDescription] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [editingId, setEditingId] = useState(null);
 
-  const headers = { Authorization: `Bearer ${token}` };
-
-  useEffect(() => { fetchItems(); }, []);
-
-  const fetchItems = async () => {
-    try { const r = await axios.get(API, { headers }); setItems(r.data); }
-    catch { setError("Failed to load menu."); }
-    finally { setLoading(false); }
+  // Helper to grab token and configure authorization headers
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem("token");
+    return {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
   };
 
-  const handleSubmit = async () => {
-    if (!form.name || !form.price || !form.category)
-      return setError("Name, price and category are required.");
+  useEffect(() => {
+    fetchMenuItems();
+  }, []);
+
+  const fetchMenuItems = async () => {
     try {
-      if (editItem) await axios.put(`${API}/${editItem._id}`, form, { headers });
-      else await axios.post(API, form, { headers });
-      setForm({ name: "", description: "", price: "", category: "Meals" });
-      setEditItem(null); setError(""); fetchItems();
-    } catch { setError("Failed to save item."); }
+      const r = await axios.get(API_MENU);
+      setMenuItems(r.data);
+    } catch (err) {
+      console.error("Failed to fetch menu items.", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDelete = async (id) => {
-    if (!confirm("Remove this dish from the menu?")) return;
-    await axios.delete(`${API}/${id}`, { headers }); fetchItems();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!name || !price) return alert("Please fill in the Item Name and Price.");
+
+    const itemPayload = { name, price: Number(price), category, description, imageUrl };
+
+    try {
+      if (editingId) {
+        // Update existing item
+        await axios.put(`${API_MENU}/${editingId}`, itemPayload, getAuthHeaders());
+        alert("Dish updated successfully!");
+      } else {
+        // Add new item
+        await axios.post(API_MENU, itemPayload, getAuthHeaders());
+        alert("New dish added to the menu!");
+      }
+      resetForm();
+      fetchMenuItems();
+    } catch (err) {
+      alert(err.response?.data?.message || "Authentication failed or server error.");
+    }
   };
 
   const handleEdit = (item) => {
-    setEditItem(item);
-    setForm({ name: item.name, description: item.description || "", price: item.price, category: item.category });
+    setEditingId(item._id);
+    setName(item.name);
+    setPrice(item.price);
+    setCategory(item.category);
+    setDescription(item.description || "");
+    setImageUrl(item.imageUrl || "");
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this dish?")) return;
+    try {
+      await axios.delete(`${API_MENU}/${id}`, getAuthHeaders());
+      alert("Dish deleted successfully.");
+      fetchMenuItems();
+    } catch (err) {
+      alert("Failed to delete item. Ensure you are authorized.");
+    }
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setName("");
+    setPrice("");
+    setCategory("Meals");
+    setDescription("");
+    setImageUrl("");
   };
 
   return (
-    <div>
-      <div className="page-header">
-        <p className="page-eyebrow">Our Offerings</p>
-        <h1 className="page-title">The Menu</h1>
-        <p className="page-subtitle">{items.length} dish{items.length !== 1 ? "es" : ""} crafted with passion</p>
-      </div>
+    <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '40px', padding: '30px', maxWidth: '1300px', margin: '0 auto', color: '#fff' }}>
+      
+      {/* LEFT COLUMN: MANAGEMENT FORM */}
+      <div style={{ 
+        background: 'linear-gradient(145deg, #1a0f05, #0a0500)', 
+        border: '1px solid rgba(247, 208, 112, 0.3)',
+        padding: '25px',
+        position: 'sticky',
+        top: '20px'
+      }}>
+        <div style={{ borderBottom: '1px solid rgba(247, 208, 112, 0.3)', paddingBottom: '15px', marginBottom: '20px', textAlign: 'center' }}>
+          <p style={{ color: '#f7d070', textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.9rem', margin: 0 }}>
+            {editingId ? "Edit Menu Item" : "Add New Dish"}
+          </p>
+        </div>
 
-      <div className="form-card">
-        <p className="form-title">{editItem ? "Edit Dish" : "Add New Dish"}</p>
-        {error && <p className="error-msg">{error}</p>}
-        <div className="form-grid">
-          <div className="form-group">
-            <label>Dish Name</label>
-            <input value={form.name} onChange={e => setForm({...form, name: e.target.value})} placeholder="e.g. Kare-Kare" />
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ color: '#f7d070', fontSize: '0.8rem', textTransform: 'uppercase' }}>Item Name *</label>
+            <input 
+              type="text" 
+              value={name} 
+              onChange={(e) => setName(e.target.value)}
+              style={{ background: '#25150b', border: '1px solid #b58d2a', padding: '10px', color: '#fff' }}
+              placeholder="e.g., Chicken Adobo"
+            />
           </div>
-          <div className="form-group">
-            <label>Price (₱)</label>
-            <input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})} placeholder="350" />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ color: '#f7d070', fontSize: '0.8rem', textTransform: 'uppercase' }}>Price (₱) *</label>
+            <input 
+              type="number" 
+              value={price} 
+              onChange={(e) => setPrice(e.target.value)}
+              style={{ background: '#25150b', border: '1px solid #b58d2a', padding: '10px', color: '#fff' }}
+              placeholder="199"
+            />
           </div>
-          <div className="form-group">
-            <label>Category</label>
-            <select value={form.category} onChange={e => setForm({...form, category: e.target.value})}>
-              <option>Meals</option>
-              <option>Drinks</option>
-              <option>Desserts</option>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ color: '#f7d070', fontSize: '0.8rem', textTransform: 'uppercase' }}>Category</label>
+            <select 
+              value={category} 
+              onChange={(e) => setCategory(e.target.value)}
+              style={{ background: '#25150b', border: '1px solid #b58d2a', padding: '10px', color: '#fff', cursor: 'pointer' }}
+            >
+              <option value="Meals">Meals</option>
+              <option value="Drinks">Drinks</option>
+              <option value="Desserts">Desserts</option>
             </select>
           </div>
-          <div className="form-group">
-            <label>Description</label>
-            <input value={form.description} onChange={e => setForm({...form, description: e.target.value})} placeholder="A brief description..." />
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ color: '#f7d070', fontSize: '0.8rem', textTransform: 'uppercase' }}>Image URL</label>
+            <input 
+              type="text" 
+              value={imageUrl} 
+              onChange={(e) => setImageUrl(e.target.value)}
+              style={{ background: '#25150b', border: '1px solid #b58d2a', padding: '10px', color: '#fff' }}
+              placeholder="https://example.com/food.jpg"
+            />
           </div>
-        </div>
-        <div className="form-actions">
-          <button className="btn-primary" onClick={handleSubmit}>
-            {editItem ? "Update Dish" : "Add to Menu"}
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ color: '#f7d070', fontSize: '0.8rem', textTransform: 'uppercase' }}>Description</label>
+            <textarea 
+              value={description} 
+              onChange={(e) => setDescription(e.target.value)}
+              style={{ background: '#25150b', border: '1px solid #b58d2a', padding: '10px', color: '#fff', minHeight: '80px', resize: 'vertical' }}
+              placeholder="Describe the flavors and ingredients..."
+            />
+          </div>
+
+          <button 
+            type="submit"
+            style={{ 
+              marginTop: '10px',
+              width: '100%',
+              background: 'linear-gradient(to bottom, #f7d070, #b58d2a)',
+              border: 'none',
+              padding: '12px',
+              color: '#000',
+              fontWeight: 'bold',
+              textTransform: 'uppercase',
+              letterSpacing: '1px',
+              cursor: 'pointer'
+            }}
+          >
+            {editingId ? "Save Changes" : "Create Item"}
           </button>
-          {editItem && (
-            <button className="btn-secondary" onClick={() => {
-              setEditItem(null);
-              setForm({ name: "", description: "", price: "", category: "Meals" });
-            }}>Cancel</button>
+
+          {editingId && (
+            <button 
+              type="button" 
+              onClick={resetForm}
+              style={{ background: 'transparent', border: '1px solid #ff4a4a', color: '#ff4a4a', padding: '10px', cursor: 'pointer', fontWeight: 'bold', textTransform: 'uppercase', fontSize: '0.8rem' }}
+            >
+              Cancel Edit
+            </button>
           )}
-        </div>
+        </form>
       </div>
 
-      <div className="section-divider">
-        <span className="section-label">All Dishes</span>
-        <div className="divider-line"></div>
-      </div>
-
-      {loading ? (
-        <p className="loading">◆ &nbsp; Preparing the menu… &nbsp; ◆</p>
-      ) : items.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-icon">🍽</div>
-          <p className="empty-title">The Menu Awaits</p>
-          <p className="empty-sub">◆ Add your first masterpiece above ◆</p>
+      {/* RIGHT COLUMN: CURRENT LIVE MENU ENTRIES */}
+      <div>
+        <div style={{ marginBottom: '30px' }}>
+          <h1 style={{ fontFamily: 'serif', fontStyle: 'italic', color: '#f7d070', fontSize: '2.5rem', margin: '0 0 5px 0' }}>Menu Dashboard</h1>
+          <p style={{ color: '#aaa', margin: 0, fontSize: '0.9rem' }}>Securely managing live listings with JWT verified actions.</p>
         </div>
-      ) : (
-        <div className="cards-grid">
-          {items.map(item => (
-            <div className="card" key={item._id}>
-              <div className="card-top">
-                <div className="card-icon">
-                  <span>{getFoodIcon(item.name, item.category)}</span>
+
+        {loading ? (
+          <p style={{ color: '#f7d070' }}>◆ Fetching backend records… ◆</p>
+        ) : menuItems.length === 0 ? (
+          <p>No dishes on the database menu yet.</p>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+            {menuItems.map((item) => (
+              <div 
+                key={item._id} 
+                style={{ 
+                  background: 'linear-gradient(145deg, #2a1a10, #140c05)', 
+                  border: '1px solid rgba(247, 208, 112, 0.2)',
+                  padding: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '20px'
+                }}
+              >
+                {/* Micro Thumbnail / Visual Info */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                  {item.imageUrl ? (
+                    <img src={item.imageUrl} alt={item.name} style={{ width: '60px', height: '60px', objectFit: 'cover', border: '1px solid #b58d2a' }} />
+                  ) : (
+                    <div style={{ width: '60px', height: '60px', background: '#25150b', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #b58d2a', fontSize: '1.5rem' }}>🍽</div>
+                  )}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <h3 style={{ margin: 0, fontFamily: 'serif', fontSize: '1.2rem' }}>{item.name}</h3>
+                      <span style={{ fontSize: '0.7rem', background: '#f7d070', color: '#000', padding: '2px 6px', fontWeight: 'bold', textTransform: 'uppercase' }}>{item.category}</span>
+                    </div>
+                    <p style={{ margin: '5px 0 0 0', fontSize: '0.85rem', color: '#bbb' }}>{item.description || "No description provided."}</p>
+                  </div>
                 </div>
-                <span className="price">₱{item.price}</span>
+
+                {/* Actions & Price Right Aligned */}
+                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '10px', minWidth: '120px' }}>
+                  <span style={{ color: '#f7d070', fontWeight: 'bold', fontSize: '1.2rem' }}>₱{item.price}</span>
+                  <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                    <button 
+                      onClick={() => handleEdit(item)}
+                      style={{ background: 'transparent', border: '1px solid #f7d070', color: '#f7d070', padding: '5px 10px', fontSize: '0.75rem', cursor: 'pointer', textTransform: 'uppercase' }}
+                    >
+                      Edit
+                    </button>
+                    <button 
+                      onClick={() => handleDelete(item._id)}
+                      style={{ background: '#ff4a4a', border: 'none', color: '#fff', padding: '5px 10px', fontSize: '0.75rem', cursor: 'pointer', textTransform: 'uppercase', fontWeight: 'bold' }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+
               </div>
-              <h3>{item.name}</h3>
-              {item.description && <p className="description">{item.description}</p>}
-              <span className="badge badge-category">
-                <span className="badge-diamond">◆</span>
-                {item.category}
-              </span>
-              <div className="card-divider"></div>
-              <div className="card-actions">
-                <button className="btn-ghost" onClick={() => handleEdit(item)}>Edit</button>
-                <button className="btn-danger" onClick={() => handleDelete(item._id)}>Remove</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }

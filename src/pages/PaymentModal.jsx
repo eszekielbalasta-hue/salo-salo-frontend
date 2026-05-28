@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
 
-const GCASH_NUMBER    = "0951-377-9596";
-const PAYMAYA_NUMBER  = "0951-377-9596";
+const GCASH_NUMBER    = "09XX-XXX-XXXX";
+const PAYMAYA_NUMBER  = "09XX-XXX-XXXX";
 const PAYPAL_EMAIL    = "your@email.com";
 const RESTAURANT_NAME = "Salo-Salo Filipino Fine Dining";
 

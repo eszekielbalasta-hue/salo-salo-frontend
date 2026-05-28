@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import axios from "axios";
+import API from "../api/apiClient";
 
 const VALIDATION = {
   USERNAME: { MIN_LENGTH: 3, MAX_LENGTH: 20, PATTERN: /^[a-zA-Z0-9_]+$/ },
@@ -85,13 +85,12 @@ export default function RegisterPage({ onSwitch }) {
     if (!isValid) return;
     setLoading(true); setError(""); setSuccess("");
     try {
-      // Swapped out local endpoint for live production Render URL path
-      await axios.post("https://salo-salo-backend.onrender.com/api/auth/register", {
+      await API.post("/api/auth/register", {
         username: form.username.trim(),
         password: form.password,
         role: form.role,
       });
-      setSuccess("Account created successfully! Redirecting to sign in...");
+      setSuccess("Account created! Redirecting to sign in...");
       setTimeout(() => onSwitch(), 2000);
     } catch (err) {
       setError(err.response?.data?.message || "Registration failed. Please try again.");
@@ -117,14 +116,11 @@ export default function RegisterPage({ onSwitch }) {
         {error   && <p className="error-msg">⚠ &nbsp;{error}</p>}
         {success && <p className="success-msg">✓ &nbsp;{success}</p>}
 
-        {/* Role Selector */}
         <div className="role-selector">
           {ROLES.map((r) => (
-            <div
-              key={r.value}
+            <div key={r.value}
               className={`role-card ${form.role === r.value ? "role-active" : ""}`}
-              onClick={() => setForm((prev) => ({ ...prev, role: r.value }))}
-            >
+              onClick={() => setForm((prev) => ({ ...prev, role: r.value }))}>
               <span className="role-label">{r.label}</span>
               <span className="role-desc">{r.desc}</span>
             </div>
@@ -133,56 +129,29 @@ export default function RegisterPage({ onSwitch }) {
 
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <div className="form-group">
-            <label>
-              Username
-              {getFieldState("username") === "success" && <span className="field-ok"> ✓</span>}
-            </label>
-            <input
-              type="text"
-              value={form.username}
-              onChange={handleChange("username")}
-              onBlur={handleBlur("username")}
+            <label>Username {getFieldState("username") === "success" && <span className="field-ok"> ✓</span>}</label>
+            <input type="text" value={form.username} onChange={handleChange("username")} onBlur={handleBlur("username")}
               placeholder="Choose a username"
               className={getFieldState("username") === "error" ? "input-error" : getFieldState("username") === "success" ? "input-success" : ""}
-              autoComplete="username"
-              disabled={loading}
-            />
+              disabled={loading} />
             {errors.username?.map((e, i) => <span key={i} className="field-error">◆ {e}</span>)}
           </div>
 
           <div className="form-group">
-            <label>
-              Password
-              {getFieldState("password") === "success" && <span className="field-ok"> ✓</span>}
-            </label>
-            <input
-              type="password"
-              value={form.password}
-              onChange={handleChange("password")}
-              onBlur={handleBlur("password")}
+            <label>Password {getFieldState("password") === "success" && <span className="field-ok"> ✓</span>}</label>
+            <input type="password" value={form.password} onChange={handleChange("password")} onBlur={handleBlur("password")}
               placeholder="Min. 6 chars, uppercase, lowercase, number"
               className={getFieldState("password") === "error" ? "input-error" : getFieldState("password") === "success" ? "input-success" : ""}
-              autoComplete="new-password"
-              disabled={loading}
-            />
+              disabled={loading} />
             {errors.password?.map((e, i) => <span key={i} className="field-error">◆ {e}</span>)}
           </div>
 
           <div className="form-group">
-            <label>
-              Confirm Password
-              {getFieldState("confirm") === "success" && <span className="field-ok"> ✓</span>}
-            </label>
-            <input
-              type="password"
-              value={form.confirm}
-              onChange={handleChange("confirm")}
-              onBlur={handleBlur("confirm")}
+            <label>Confirm Password {getFieldState("confirm") === "success" && <span className="field-ok"> ✓</span>}</label>
+            <input type="password" value={form.confirm} onChange={handleChange("confirm")} onBlur={handleBlur("confirm")}
               placeholder="Repeat your password"
               className={getFieldState("confirm") === "error" ? "input-error" : getFieldState("confirm") === "success" ? "input-success" : ""}
-              autoComplete="new-password"
-              disabled={loading}
-            />
+              disabled={loading} />
             {errors.confirm?.map((e, i) => <span key={i} className="field-error">◆ {e}</span>)}
           </div>
 

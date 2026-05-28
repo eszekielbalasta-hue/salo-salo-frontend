@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import axios from "axios";
+import API from "../api/apiClient";
 
 const VALIDATION = {
   USERNAME: { MIN_LENGTH: 3, MAX_LENGTH: 20, PATTERN: /^[a-zA-Z0-9_]+$/ },
@@ -7,27 +7,26 @@ const VALIDATION = {
 };
 
 export default function LoginPage({ onLogin, onSwitch }) {
-  const [form, setForm] = useState({ username: "", password: "" });
-  const [errors, setErrors] = useState({});
+  const [form, setForm]       = useState({ username: "", password: "" });
+  const [errors, setErrors]   = useState({});
   const [touched, setTouched] = useState({});
-  const [error, setError] = useState("");
+  const [error, setError]     = useState("");
   const [loading, setLoading] = useState(false);
 
   const validateField = useCallback((name, value) => {
     const fieldErrors = [];
     switch (name) {
       case "username": {
-        const trimmed = value.trim();
-        if (!trimmed) { fieldErrors.push("Username is required"); break; }
-        if (trimmed.length < VALIDATION.USERNAME.MIN_LENGTH) fieldErrors.push(`At least ${VALIDATION.USERNAME.MIN_LENGTH} characters`);
-        if (trimmed.length > VALIDATION.USERNAME.MAX_LENGTH) fieldErrors.push(`No more than ${VALIDATION.USERNAME.MAX_LENGTH} characters`);
-        if (!VALIDATION.USERNAME.PATTERN.test(trimmed)) fieldErrors.push("Letters, numbers, and underscores only");
+        const t = value.trim();
+        if (!t) { fieldErrors.push("Username is required"); break; }
+        if (t.length < VALIDATION.USERNAME.MIN_LENGTH) fieldErrors.push(`At least ${VALIDATION.USERNAME.MIN_LENGTH} characters`);
+        if (t.length > VALIDATION.USERNAME.MAX_LENGTH) fieldErrors.push(`No more than ${VALIDATION.USERNAME.MAX_LENGTH} characters`);
+        if (!VALIDATION.USERNAME.PATTERN.test(t)) fieldErrors.push("Letters, numbers, and underscores only");
         break;
       }
       case "password": {
         if (!value) { fieldErrors.push("Password is required"); break; }
         if (value.length < VALIDATION.PASSWORD.MIN_LENGTH) fieldErrors.push(`At least ${VALIDATION.PASSWORD.MIN_LENGTH} characters`);
-        if (value.length > VALIDATION.PASSWORD.MAX_LENGTH) fieldErrors.push(`No more than ${VALIDATION.PASSWORD.MAX_LENGTH} characters`);
         if (!/[A-Z]/.test(value)) fieldErrors.push("Must contain an uppercase letter");
         if (!/[a-z]/.test(value)) fieldErrors.push("Must contain a lowercase letter");
         if (!/[0-9]/.test(value)) fieldErrors.push("Must contain a number");
@@ -74,8 +73,7 @@ export default function LoginPage({ onLogin, onSwitch }) {
     if (!isValid) return;
     setLoading(true); setError("");
     try {
-      // Swapped relative local route to production Render API URL endpoint
-      const res = await axios.post("https://salo-salo-backend.onrender.com/api/auth/login", {
+      const res = await API.post("/api/auth/login", {
         username: form.username.trim(),
         password: form.password,
       });
@@ -112,38 +110,20 @@ export default function LoginPage({ onLogin, onSwitch }) {
 
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <div className="form-group">
-            <label>
-              Username
-              {getFieldState("username") === "success" && <span className="field-ok"> ✓</span>}
-            </label>
-            <input
-              type="text"
-              value={form.username}
-              onChange={handleChange("username")}
-              onBlur={handleBlur("username")}
+            <label>Username {getFieldState("username") === "success" && <span className="field-ok"> ✓</span>}</label>
+            <input type="text" value={form.username} onChange={handleChange("username")} onBlur={handleBlur("username")}
               placeholder="Enter your username"
               className={getFieldState("username") === "error" ? "input-error" : getFieldState("username") === "success" ? "input-success" : ""}
-              autoComplete="username"
-              disabled={loading}
-            />
+              autoComplete="username" disabled={loading} />
             {errors.username?.map((e, i) => <span key={i} className="field-error">◆ {e}</span>)}
           </div>
 
           <div className="form-group">
-            <label>
-              Password
-              {getFieldState("password") === "success" && <span className="field-ok"> ✓</span>}
-            </label>
-            <input
-              type="password"
-              value={form.password}
-              onChange={handleChange("password")}
-              onBlur={handleBlur("password")}
+            <label>Password {getFieldState("password") === "success" && <span className="field-ok"> ✓</span>}</label>
+            <input type="password" value={form.password} onChange={handleChange("password")} onBlur={handleBlur("password")}
               placeholder="Enter your password"
               className={getFieldState("password") === "error" ? "input-error" : getFieldState("password") === "success" ? "input-success" : ""}
-              autoComplete="current-password"
-              disabled={loading}
-            />
+              autoComplete="current-password" disabled={loading} />
             {errors.password?.map((e, i) => <span key={i} className="field-error">◆ {e}</span>)}
           </div>
 
