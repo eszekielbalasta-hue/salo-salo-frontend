@@ -967,3 +967,138 @@ input.input-success { border-color: rgba(76,175,125,0.55) !important; }
 .chat-send { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--g4), var(--g2), var(--g1)); color: #0A0500; font-size: 0.95rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; box-shadow: 0 2px 8px rgba(232,160,32,0.28); }
 .chat-send:hover:not(:disabled) { transform: scale(1.1); box-shadow: 0 4px 12px rgba(232,160,32,0.45); }
 .chat-send:disabled { opacity: 0.38; cursor: not-allowed; }
+
+/* ═══════════════════════════════════════
+   ✨ SHINING FONTS & GLOW EFFECTS
+═══════════════════════════════════════ */
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes textGlow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(255,215,0,0.3)) drop-shadow(0 0 20px rgba(232,160,32,0.15)); }
+  50%       { filter: drop-shadow(0 0 16px rgba(255,215,0,0.6)) drop-shadow(0 0 40px rgba(232,160,32,0.3)); }
+}
+
+@keyframes softPulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.82; }
+}
+
+/* Brand name — continuous shimmer */
+.brand-name {
+  background: linear-gradient(90deg,
+    var(--g4) 0%, var(--g6) 15%,
+    var(--g1) 35%, var(--g5) 50%,
+    var(--g1) 65%, var(--g6) 85%,
+    var(--g4) 100%
+  ) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: shimmer 3s linear infinite, textGlow 3s ease-in-out infinite;
+}
+
+/* Hero title — shimmer */
+.hero-title {
+  background: linear-gradient(90deg,
+    var(--g4) 0%, var(--g2) 15%,
+    var(--g1) 35%, var(--g5) 50%,
+    var(--g1) 65%, var(--g2) 85%,
+    var(--g4) 100%
+  ) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: shimmer 4s linear infinite;
+}
+
+/* Page titles — glow pulse */
+.page-title {
+  animation: textGlow 3s ease-in-out infinite !important;
+}
+
+/* Auth title — shimmer */
+.auth-title {
+  background: linear-gradient(90deg,
+    var(--g4) 0%, var(--g6) 20%,
+    var(--g1) 40%, var(--g5) 55%,
+    var(--g1) 70%, var(--g6) 85%,
+    var(--g4) 100%
+  ) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: shimmer 3.5s linear infinite;
+}
+
+/* Card dish names — subtle glow on hover */
+.card:hover h3 {
+  text-shadow: 0 0 12px rgba(255,215,0,0.2);
+  transition: text-shadow 0.3s;
+}
+
+/* Price — glow pulse */
+.price {
+  animation: textGlow 2.5s ease-in-out infinite !important;
+}
+
+/* Cart total amount */
+.cart-total-amount {
+  animation: textGlow 2.5s ease-in-out infinite !important;
+}
+
+/* Modal title */
+.modal-title {
+  animation: textGlow 3s ease-in-out infinite !important;
+}
+
+/* Auth heading */
+.auth-heading {
+  animation: softPulse 3s ease-in-out infinite !important;
+}
+
+/* Stat values */
+.stat-value {
+  animation: textGlow 3s ease-in-out infinite !important;
+}
+
+/* Order total */
+.order-total {
+  animation: textGlow 2.5s ease-in-out infinite !important;
+}
+
+/* Section labels */
+.section-label, .page-eyebrow, .form-title {
+  animation: softPulse 4s ease-in-out infinite !important;
+}
+
+/* Nav brand tagline */
+.brand-tagline {
+  animation: softPulse 3s ease-in-out infinite !important;
+}
+
+/* Hero subtitle */
+.hero-subtitle, .hero-tagline {
+  animation: softPulse 4s ease-in-out infinite !important;
+}
+
+/* Chatbot button */
+.chat-fab-label {
+  animation: softPulse 2s ease-in-out infinite !important;
+}
+
+/* Confirm title in payment */
+.confirm-title {
+  animation: textGlow 3s ease-in-out infinite !important;
+}
+
+/* QR amount value */
+.qr-amount-value {
+  animation: textGlow 2.5s ease-in-out infinite !important;
+}

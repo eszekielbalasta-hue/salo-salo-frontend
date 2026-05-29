@@ -34,6 +34,7 @@ export default function MenuPage({ token }) {
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState("");
   const [editItem, setEditItem] = useState(null);
+  const [filter, setFilter]     = useState("All");
   const [form, setForm] = useState({
     name: "", description: "", price: "",
     category: "Meals", imageUrl: ""
@@ -75,6 +76,8 @@ export default function MenuPage({ token }) {
       imageUrl: item.imageUrl || ""
     });
   };
+
+  const filtered = filter === "All" ? items : items.filter(i => i.category === filter);
 
   return (
     <div>
@@ -160,9 +163,19 @@ export default function MenuPage({ token }) {
         <div className="divider-line"></div>
       </div>
 
+      <div className="cat-filter">
+        {["All", "Meals", "Drinks", "Desserts"].map(c => (
+          <button key={c} className={filter === c ? "cat-btn-active" : "cat-btn"}
+            onClick={() => setFilter(c)}
+            style={{ display:"flex", alignItems:"center", gap:6 }}>
+            {c === "Meals" && "🍽"}{c === "Drinks" && "🥤"}{c === "Desserts" && "🍮"} {c}
+          </button>
+        ))}
+      </div>
+
       {loading ? (
         <p className="loading">◆ &nbsp; Preparing the menu… &nbsp; ◆</p>
-      ) : items.length === 0 ? (
+      ) : filtered.length === 0 ? (
         <div className="empty-state">
           <div className="empty-icon">🍽</div>
           <p className="empty-title">The Menu Awaits</p>
@@ -170,7 +183,7 @@ export default function MenuPage({ token }) {
         </div>
       ) : (
         <div className="cards-grid">
-          {items.map(item => (
+          {filtered.map(item => (
             <div className="card" key={item._id}>
               {/* Image or icon */}
               {item.imageUrl ? (
