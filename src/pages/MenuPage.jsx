@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import API from "../api/apiClient";
 
-const API = "/api/menu";
+const MENU_URL = "/api/menu";
 
 const getFoodIcon = (name, category) => {
   const n = name.toLowerCase();
@@ -46,7 +46,7 @@ export default function MenuPage({ token }) {
   useEffect(() => { fetchItems(); }, []);
 
   const fetchItems = async () => {
-    try { const r = await API.get(API); setItems(r.data); }
+    try { const r = await API.get(MENU_URL); setItems(r.data); }
     catch (err) { setError("Failed to load menu: " + (err.response?.data?.message || err.message)); }
     finally { setLoading(false); }
   };
@@ -55,8 +55,8 @@ export default function MenuPage({ token }) {
     if (!form.name || !form.price || !form.category)
       return setError("Name, price and category are required.");
     try {
-      if (editItem) await API.put(`${API}/${editItem._id}`, form);
-      else await API.post(API, form);
+      if (editItem) await API.put(`${MENU_URL}/${editItem._id}`, form);
+      else await API.post(MENU_URL, form);
       setForm({ name: "", description: "", price: "", category: "Meals", imageUrl: "" });
       setEditItem(null); setError(""); fetchItems();
     } catch (err) { setError("Failed to save: " + (err.response?.data?.message || err.message)); }
@@ -64,7 +64,7 @@ export default function MenuPage({ token }) {
 
   const handleDelete = async (id) => {
     if (!confirm("Remove this dish?")) return;
-    await API.delete(`${API}/${id}`); fetchItems();
+    await API.delete(`${MENU_URL}/${id}`); fetchItems();
   };
 
   const handleEdit = (item) => {
