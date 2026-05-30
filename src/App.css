@@ -1102,3 +1102,170 @@ input.input-success { border-color: rgba(76,175,125,0.55) !important; }
 .qr-amount-value {
   animation: textGlow 2.5s ease-in-out infinite !important;
 }
+
+/* ═══════════════════════════════════════
+   💎 STRONGER SHINING POLISH — ALL TEXT
+═══════════════════════════════════════ */
+
+@keyframes goldShimmer {
+  0%   { background-position: -300% center; }
+  100% { background-position: 300% center; }
+}
+
+@keyframes strongGlow {
+  0%, 100% {
+    filter: drop-shadow(0 0 6px rgba(255,215,0,0.5))
+            drop-shadow(0 0 18px rgba(232,160,32,0.3))
+            drop-shadow(0 0 35px rgba(200,128,10,0.15));
+  }
+  50% {
+    filter: drop-shadow(0 0 12px rgba(255,215,0,0.8))
+            drop-shadow(0 0 30px rgba(232,160,32,0.5))
+            drop-shadow(0 0 60px rgba(200,128,10,0.25));
+  }
+}
+
+@keyframes subtleGlow {
+  0%, 100% { text-shadow: 0 0 8px rgba(255,215,0,0.3), 0 0 20px rgba(232,160,32,0.15); }
+  50%       { text-shadow: 0 0 16px rgba(255,215,0,0.6), 0 0 40px rgba(232,160,32,0.3), 0 0 60px rgba(200,128,10,0.15); }
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.88; transform: scale(0.995); }
+}
+
+/* ── Brand name ── */
+.brand-name {
+  background: linear-gradient(90deg,
+    #7A5010 0%, #C88010 10%, #FFD700 25%,
+    #FFF5B0 40%, #FFD700 55%, #E8A020 70%,
+    #FFD700 85%, #C88010 100%
+  ) !important;
+  background-size: 300% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: goldShimmer 3s linear infinite !important;
+  filter: drop-shadow(0 0 12px rgba(255,215,0,0.5)) !important;
+}
+
+/* ── Hero title ── */
+.hero-title {
+  background: linear-gradient(90deg,
+    #7A5010 0%, #C88010 8%, #FFD700 22%,
+    #FFF8C0 38%, #FFD700 52%, #F5C842 68%,
+    #FFD700 82%, #C88010 100%
+  ) !important;
+  background-size: 300% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: goldShimmer 4s linear infinite !important;
+}
+
+/* ── Page titles ── */
+.page-title {
+  animation: strongGlow 3s ease-in-out infinite !important;
+}
+
+/* ── Auth title ── */
+.auth-title {
+  background: linear-gradient(90deg,
+    #7A5010 0%, #C88010 15%, #FFD700 35%,
+    #FFF5B0 50%, #FFD700 65%, #C88010 85%, #7A5010 100%
+  ) !important;
+  background-size: 300% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  animation: goldShimmer 3.5s linear infinite !important;
+}
+
+/* ── Auth heading ── */
+.auth-heading {
+  animation: subtleGlow 3s ease-in-out infinite !important;
+}
+
+/* ── Prices ── */
+.price {
+  animation: strongGlow 2.5s ease-in-out infinite !important;
+}
+
+/* ── Cart total ── */
+.cart-total-amount {
+  animation: strongGlow 2s ease-in-out infinite !important;
+}
+
+/* ── Stat values ── */
+.stat-value {
+  animation: strongGlow 3s ease-in-out infinite !important;
+}
+
+/* ── Order total ── */
+.order-total {
+  animation: strongGlow 2.5s ease-in-out infinite !important;
+}
+
+/* ── Modal title ── */
+.modal-title {
+  animation: subtleGlow 3s ease-in-out infinite !important;
+}
+
+/* ── Modal amount ── */
+.modal-amount {
+  animation: subtleGlow 2.5s ease-in-out infinite !important;
+}
+
+/* ── QR amount value ── */
+.qr-amount-value {
+  animation: strongGlow 2.5s ease-in-out infinite !important;
+}
+
+/* ── Confirm title ── */
+.confirm-title {
+  animation: subtleGlow 3s ease-in-out infinite !important;
+}
+
+/* ── Card headings on hover ── */
+.card h3 {
+  transition: text-shadow 0.3s !important;
+}
+.card:hover h3 {
+  text-shadow: 0 0 10px rgba(255,215,0,0.25), 0 0 25px rgba(232,160,32,0.15) !important;
+}
+
+/* ── Navbar badge ── */
+.user-badge {
+  animation: breathe 4s ease-in-out infinite !important;
+}
+
+/* ── Section labels ── */
+.section-label, .modal-label, .form-title {
+  animation: subtleGlow 4s ease-in-out infinite !important;
+}
+
+/* ── Hero subtitle & tagline ── */
+.hero-subtitle, .hero-tagline, .page-eyebrow {
+  animation: breathe 4s ease-in-out infinite !important;
+}
+
+/* ── Payment badge glow on hover ── */
+.pay-badge:hover {
+  box-shadow: 0 0 12px currentColor !important;
+}
+
+/* ── Lola chatbot button ── */
+.chat-fab {
+  animation: strongGlow 3s ease-in-out infinite !important;
+}
+
+/* ── POS total ── */
+.cart-total-label {
+  animation: subtleGlow 3s ease-in-out infinite !important;
+}
+
+/* ── All gold text elements stronger ── */
+[class*="badge"]:not(.badge-category) {
+  text-shadow: 0 0 8px currentColor !important;
+}
